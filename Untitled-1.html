@@ -1,0 +1,45 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Free Paper Check</title>
+    <link href="https://unpkg.com/@picocss/pico@1.5.0/css/pico.min.css" rel="stylesheet">
+</head>
+<body>
+    <main class="container">
+        <h1>毕业论文查重系统</h1>
+        
+        <form id="uploadForm">
+            <input type="file" id="thesisFile" accept=".txt,.pdf">
+            <button type="submit">开始检测</button>
+        </form>
+
+        <div id="result" style="display:none;">
+            <h3>相似度：<span id="similarity">0</span>%</h3>
+            <pre id="report"></pre>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = document.getElementById('thesisFile').files[0];
+            
+            // 转换文本
+            const text = await file.text();
+            
+            // 调用免费API
+            const response = await fetch('https://your-worker.dev/api/check', {
+                method: 'POST',
+                body: JSON.stringify({ text })
+            });
+            
+            // 显示结果
+            const result = await response.json();
+            document.getElementById('similarity').textContent = result.similarity;
+            document.getElementById('report').textContent = result.details;
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
