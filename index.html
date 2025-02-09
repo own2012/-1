@@ -1,43 +1,90 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>论文查重系统 - 免费检测平台</title>
-    <link rel="stylesheet" href="/styles/pico.min.css">
-    <link rel="stylesheet" href="/styles/main.css">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <title>免费论文查重</title>
+    <link href="https://unpkg.com/@picocss/pico@1.5.0/css/pico.min.css" rel="stylesheet">
+    <style>
+        .upload-box {
+            border: 2px dashed #007bff;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        #result { display: none; }
+    </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="container">
-        <ul>
-            <li><strong>PaperCheck</strong></li>
-        </ul>
-        <ul>
-            <li><a href="#upload">开始检测</a></li>
-            <li><a href="#about">关于我们</a></li>
-        </ul>
-    </nav>
-
-    <!-- 主内容区 -->
     <main class="container">
-        <section id="upload">
-            <h2>上传毕业论文</h2>
-            <div class="drop-zone" id="dropZone">
-                <input type="file" id="fileInput" accept=".pdf,.docx">
-                <p>拖放文件至此或点击选择</p>
-            </div>
-            <progress id="progressBar" value="0" max="100"></progress>
-        </section>
-
-        <section id="result" hidden>
-            <h3>检测结果</h3>
-            <div id="resultContent"></div>
-        </section>
+        <h1>毕业论文查重系统</h1>
+        
+        <div class="upload-box" id="dropZone">
+            <input type="file" id="fileInput" accept=".txt,.pdf,.docx">
+            <p>拖放文件或点击上传（最大5MB）</p>
+        </div>
+        
+        <progress id="progress" value="0" max="100" style="width:100%"></progress>
+        
+        <div id="result">
+            <h3>检测结果：<span id="similarity">0</span>%</h3>
+            <div id="details"></div>
+        </div>
     </main>
 
-    <!-- 脚本 -->
-    <script src="/scripts/app.js"></script>
+    <script>
+        const workerURL = 'https://weathered-poetry-3d21.1803997604.workers.dev';
+
+        // 文件处理
+        document.getElementById('fileInput').addEventListener('change', handleFile);
+        
+        // 拖放处理
+        dropZone.ondragover = e => e.preventDefault();
+        dropZone.ondrop = e => {
+            e.preventDefault();
+            handleFile(e.dataTransfer.files[0]);
+        };
+
+        async function handleFile(file) {
+            if (!file || file.size > 5 * 1024 * 1024) {
+                alert('文件大小超过5MB限制');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onprogress = e => {
+                if (e.lengthComputable) {
+                    document.getElementById('progress').value = 
+                        (e.loaded / e.total) * 100;
+                }
+            };
+
+            try {
+                const text = await new Promise((resolve, reject) => {
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+
+                const response = await fetch(workerURL, {
+                    method: 'POST',
+                    body: JSON.stringify({ text }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+                showResult(result);
+            } catch (error) {
+                alert('检测失败: ' + error.message);
+            }
+        }
+
+        function showResult(data) {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('similarity').textContent = data.similarity;
+            document.getElementById('details').innerHTML = data.matches
+                .map(m => `<p>${m.text} <em>(${m.score}%)</em></p>`)
+                .join('');
+        }
+    </script>
 </body>
 </html>
