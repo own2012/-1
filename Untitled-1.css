@@ -1,0 +1,31 @@
+/* 响应式设计 */
+@media (min-width: 992px) {
+    .container { max-width: 960px; }
+}
+
+/* 文件上传区样式 */
+.drop-zone {
+    border: 2px dashed #007bff;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.drop-zone.dragover {
+    background: rgba(0, 123, 255, 0.1);
+}
+
+#progressBar {
+    width: 100%;
+    height: 20px;
+    margin-top: 1rem;
+    transition: opacity 0.3s;
+}
+
+/* 结果展示 */
+#resultContent {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}

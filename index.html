@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文查重系统 - 免费检测平台</title>
+    <link rel="stylesheet" href="/styles/pico.min.css">
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="container">
+        <ul>
+            <li><strong>PaperCheck</strong></li>
+        </ul>
+        <ul>
+            <li><a href="#upload">开始检测</a></li>
+            <li><a href="#about">关于我们</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container">
+        <section id="upload">
+            <h2>上传毕业论文</h2>
+            <div class="drop-zone" id="dropZone">
+                <input type="file" id="fileInput" accept=".pdf,.docx">
+                <p>拖放文件至此或点击选择</p>
+            </div>
+            <progress id="progressBar" value="0" max="100"></progress>
+        </section>
+
+        <section id="result" hidden>
+            <h3>检测结果</h3>
+            <div id="resultContent"></div>
+        </section>
+    </main>
+
+    <!-- 脚本 -->
+    <script src="/scripts/app.js"></script>
+</body>
+</html>
